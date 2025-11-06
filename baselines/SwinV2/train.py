@@ -71,8 +71,8 @@ os.environ["WANDB_PROJECT"] = "SwinOpenFake"
 
 
 def main(args):
-    processor = AutoImageProcessor.from_pretrained("microsoft/swinv2-small-patch4-window16-256", cache_dir=args.cache_dir, use_fast=True)
-    model = AutoModelForImageClassification.from_pretrained("microsoft/swinv2-small-patch4-window16-256", cache_dir=args.cache_dir)
+    processor = AutoImageProcessor.from_pretrained("microsoft/swinv2-base-patch4-window16-256", cache_dir=args.cache_dir, use_fast=True)
+    model = AutoModelForImageClassification.from_pretrained("microsoft/swinv2-base-patch4-window16-256", cache_dir=args.cache_dir)
     
     # change the number of classes to 2
     model.num_labels = 2
