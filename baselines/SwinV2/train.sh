@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH -J dataset-check                
+#SBATCH -J swin_base       
 #SBATCH --gres=gpu:1                    
 #SBATCH --cpus-per-gpu=8
 #SBATCH --mem-per-gpu=29G

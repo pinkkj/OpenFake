@@ -228,7 +228,7 @@ if __name__ == "__main__":
     trainer, eval = main(args)
     cache_root = os.environ.get("SCRATCH", args.cache_dir or "/tmp")
     cache_dir  = os.path.join(cache_root, ".cache")
-    trainer.train(resume_from_checkpoint=False)
+    trainer.train(resume_from_checkpoint=(args.resume_from_checkpoint or True))
     #trainer._load_from_checkpoint(resume_from_checkpoint=args.resume_from_checkpoint)
     
     # evaluate the model
