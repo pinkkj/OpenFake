@@ -6,7 +6,7 @@ from transformers import default_data_collator
 import torch
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 import argparse
-
+from datasets import Image as HfImage
 import random
 import cv2
 from PIL import Image, ImageFile
@@ -14,7 +14,7 @@ import io
 ImageFile.LOAD_TRUNCATED_IMAGES = True     # ← tolerate partial / corrupt files
 import torch.serialization as tser
 from numpy.core import multiarray
-tser.add_safe_globals([multiarray._reconstruct])
+tser.add_safe_globals([multiarray._reconstruct, np.ndarray])
 
 def estimate_blur_laplacian(img_np):
     gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
@@ -89,7 +89,8 @@ def main(args):
     # Load streaming datasets from Hugging Face
     train_data = load_dataset("ComplexDataLab/OpenFake", split="train", streaming=True, download_config=DownloadConfig(cache_dir=args.cache_dir))
     eval_data = load_dataset("ComplexDataLab/OpenFake", split="test", streaming=True, download_config=DownloadConfig(cache_dir=args.cache_dir))
-
+    train_data = train_data.cast_column("image", HfImage(decode=False))
+    eval_data  = eval_data.cast_column("image", HfImage(decode=False))
     # Preprocessing function to apply processor and degradation
     def preprocess_train(example):
         image = example["image"]
@@ -128,6 +129,8 @@ def main(args):
     def preprocess_eval(example):
         image = example["image"]
         # Ensure image is a PIL Image in RGB mode
+        # PIL로 연 직후
+        
         if not isinstance(image, Image.Image):
             if isinstance(image, np.ndarray):
                 image = Image.fromarray(image)
@@ -142,6 +145,8 @@ def main(args):
                     raise ValueError(f"Unsupported image dict keys: {image.keys()}")
             else:
                 raise ValueError(f"Unsupported image type: {type(image)}")
+        if hasattr(image, "info") and "exif" in image.info:
+            image.info.pop("exif", None)
         # Ensure 3‑channel RGB
         if image.mode != "RGB":
             image = image.convert("RGB")
