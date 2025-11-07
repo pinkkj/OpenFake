@@ -64,7 +64,7 @@ def degrade_image_to_match_laion5(img_pil, real_blur_vals, real_res_vals,
 
     return Image.fromarray(img_np)
 
-cache_dir = os.path.join(os.environ["SCRATCH"], ".cache")
+#cache_dir = os.path.join(os.environ["SCRATCH"], ".cache")
 scratch_dir = os.environ.get("SCRATCH")
 os.environ["WANDB_PROJECT"] = "SwinOpenFake"
 
@@ -195,7 +195,7 @@ def main(args):
         dataloader_pin_memory=True,
         load_best_model_at_end=True,
         run_name="swinv2-finetuned-openfake",
-        report_to="wandb",
+        report_to="none",
     )
 
     # Initialize Trainer
@@ -226,6 +226,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     trainer, eval = main(args)
+    cache_root = os.environ.get("SCRATCH", args.cache_dir or "/tmp")
+    cache_dir  = os.path.join(cache_root, ".cache")
     trainer.train(resume_from_checkpoint=False)
     #trainer._load_from_checkpoint(resume_from_checkpoint=args.resume_from_checkpoint)
     
