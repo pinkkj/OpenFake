@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-gpu=8
 #SBATCH --mem-per-gpu=29G
 #SBATCH -p batch_ugrad                  
-#SBATCH -w aurora-g1                 
+#SBATCH -w aurora-g8                 
 #SBATCH -t 1-0                          
 #SBATCH -o ../logs/swin_base_slurm-%A.out         
 
@@ -23,4 +23,4 @@ python train.py \
   --cache_dir ".cache"
 
 # 작업 종료
-exit 01
+exit 0

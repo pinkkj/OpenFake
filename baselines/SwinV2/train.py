@@ -12,7 +12,9 @@ import cv2
 from PIL import Image, ImageFile
 import io
 ImageFile.LOAD_TRUNCATED_IMAGES = True     # ← tolerate partial / corrupt files
-
+import torch.serialization as tser
+from numpy.core import multiarray
+tser.add_safe_globals([multiarray._reconstruct])
 
 def estimate_blur_laplacian(img_np):
     gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
@@ -228,8 +230,9 @@ if __name__ == "__main__":
     trainer, eval = main(args)
     cache_root = os.environ.get("SCRATCH", args.cache_dir or "/tmp")
     cache_dir  = os.path.join(cache_root, ".cache")
-    trainer.train(resume_from_checkpoint=(args.resume_from_checkpoint or True))
+    #trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
     #trainer._load_from_checkpoint(resume_from_checkpoint=args.resume_from_checkpoint)
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
     
     # evaluate the model
     eval_results = trainer.evaluate(eval_dataset=eval)
